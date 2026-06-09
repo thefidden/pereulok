@@ -24,6 +24,7 @@ class OrderViewSet(viewsets.ViewSet):
     serializer_class = OrderSerializer
 
     @silk_profile(name = 'Orders List')
+    @action(methods = ['get'], detail = False, permission_classes = [IsAuthenticated])
     def list(self, request: Request) -> Response:
         """Получает список заказов текущего пользователя.
         
@@ -45,6 +46,7 @@ class OrderViewSet(viewsets.ViewSet):
 
     @silk_profile(name = 'Orders')
     @transaction.atomic
+    @action(methods = ['post'], detail = False, permission_classes = [IsAuthenticated])
     def create(self, request: Request) -> Response:
         """Создает новый заказ из товаров в корзине.
         
@@ -130,6 +132,7 @@ class OrderViewSet(viewsets.ViewSet):
         return Response({'order': order_serializer.data, 'formUrl': form_url}, status = status.HTTP_201_CREATED)
 
     @silk_profile(name = 'Cart Retrieve')
+    @action(methods = ['get'], detail = True, permission_classes = [IsAuthenticated])
     def retrieve(self, request: Request, pk) -> Response:
         """Получает детальную информацию о заказе.
         
@@ -151,6 +154,7 @@ class OrderViewSet(viewsets.ViewSet):
 
     @silk_profile(name = 'Cart Delete')
     @transaction.atomic
+    @action(methods = ['delete'], detail = False, permission_classes = [IsAuthenticated])
     def delete(self, request: Request, pk) -> Response:
         """Удаляет заказ и восстанавливает остатки товаров.
         

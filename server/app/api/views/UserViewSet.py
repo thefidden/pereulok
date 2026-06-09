@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractUser, AnonymousUser
 from rest_framework import viewsets, status
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.decorators import action, permission_classes
+from rest_framework.permissions import *
 from silk.profiling.profiler import silk_profile
 
 from api.serializers.UserSerializer import UserSerializer
@@ -14,6 +16,7 @@ class UserViewSet(viewsets.ViewSet):
     serializer_class = UserSerializer
 
     @silk_profile(name = 'User Retrieve')
+    @action(methods = ['get'], detail = False, permission_classes = [AllowAny])
     def retrieve(self, request: Request) -> Response:
         """Получает информацию о текущем пользователе.
         

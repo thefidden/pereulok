@@ -2,9 +2,11 @@
 
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.decorators import action, permission_classes
+from rest_framework.permissions import *
 from silk.profiling.profiler import silk_profile
 
 from api.filters import ProductFilter
@@ -23,6 +25,7 @@ class ProductViewSet(viewsets.ViewSet):
     filterset_class = ProductFilter
 
     @silk_profile(name = 'Product List')
+    @action(methods = ['get'], detail = False, permission_classes = [AllowAny])
     def list(self, request: Request) -> Response:
         """Получает список товаров с поддержкой фильтрации.
         
@@ -43,6 +46,7 @@ class ProductViewSet(viewsets.ViewSet):
         return Response(serializer.data, status = status.HTTP_200_OK)
 
     @silk_profile(name = 'Product Retrieve')
+    @action(methods = ['get'], detail = True, permission_classes = [AllowAny])
     def retrieve(self, request: Request, pk) -> Response:
         """Получает детальную информацию о товаре.
         
@@ -58,6 +62,7 @@ class ProductViewSet(viewsets.ViewSet):
         return Response(serializer.data, status = status.HTTP_200_OK)
 
     @silk_profile(name = 'Product Create')
+    @action(methods = ['post'], detail = False, permission_classes = [IsAdminUser])
     def create(self, request: Request) -> Response:
         """Создает новый товар (только для администраторов).
         
@@ -80,6 +85,7 @@ class ProductViewSet(viewsets.ViewSet):
             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
     @silk_profile(name = 'Product Delete')
+    @action(methods = ['delete'], detail = True, permission_classes = [IsAdminUser])
     def delete(self, request: Request, pk) -> Response:
         """Удаляет товар.
         
@@ -98,6 +104,7 @@ class ProductViewSet(viewsets.ViewSet):
         )
 
     @silk_profile(name = 'Product Update')
+    @action(methods = ['patch'], detail = True, permission_classes = [IsAdminUser])
     def partial_update(self, request: Request, pk) -> Response:
         """Частично обновляет товар.
         

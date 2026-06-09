@@ -5,6 +5,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.decorators import action, permission_classes
+from rest_framework.permissions import *
 from silk.profiling.profiler import silk_profile
 
 from api.models.Cart import Cart
@@ -20,6 +22,7 @@ class CartsViewSet(viewsets.ViewSet):
     serializer_class = CartSerializer
 
     @silk_profile(name = 'Cart List')
+    @action(methods = ['get'], detail = False, permission_classes = [IsAuthenticated])
     def list(self, request: Request) -> Response:
         """Получает список товаров в корзине пользователя.
         
@@ -42,6 +45,7 @@ class CartsViewSet(viewsets.ViewSet):
         return Response(data = data, status = status.HTTP_200_OK)
 
     @silk_profile(name = 'Cart Create')
+    @action(methods = ['post'], detail = False, permission_classes = [IsAuthenticated])
     def create(self, request: Request) -> Response:
         """Добавляет товар в корзину.
         
@@ -69,6 +73,7 @@ class CartsViewSet(viewsets.ViewSet):
         return Response(serializer.data, status = status.HTTP_201_CREATED)
 
     @silk_profile(name = 'Cart Retrieve')
+    @action(methods = ['get'], detail = True, permission_classes = [IsAuthenticated])
     def retrieve(self, request: Request, pk) -> Response:
         """Получает информацию о позиции в корзине.
         
@@ -84,6 +89,7 @@ class CartsViewSet(viewsets.ViewSet):
         return Response(data = serializer.data, status = status.HTTP_200_OK)
 
     @silk_profile(name = 'Cart Update')
+    @action(methods = ['patch'], detail = False, permission_classes = [IsAuthenticated])
     def partial_update(self, request: Request, pk) -> Response:
         """Обновляет количество товара в корзине.
         
@@ -107,6 +113,7 @@ class CartsViewSet(viewsets.ViewSet):
         return Response(data = serializer.data, status = status.HTTP_200_OK)
 
     @silk_profile(name = 'Cart Delete')
+    @action(methods = ['delete'], detail = False, permission_classes = [IsAuthenticated])
     def delete(self, request: Request, pk) -> Response:
         """Удаляет товар из корзины.
         

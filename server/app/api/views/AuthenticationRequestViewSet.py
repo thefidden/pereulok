@@ -4,7 +4,8 @@ from uuid import UUID
 
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes
+from rest_framework.permissions import *
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -21,7 +22,7 @@ class AuthenticationRequestView(viewsets.ViewSet):
     """
     serializer_class = AuthenticationRequestSerializer
 
-    @action(methods = ['post'], detail = False)
+    @action(methods = ['post'], detail = False, permission_classes = [AllowAny])
     def create(self, request: Request) -> Response:
         """Создает запрос аутентификации с данными Telegram.
         
@@ -50,7 +51,7 @@ class AuthenticationRequestView(viewsets.ViewSet):
             auth_token.delete()
             return Response(status = status.HTTP_400_BAD_REQUEST)
 
-    @action(methods = ['get'], detail = True)
+    @action(methods = ['get'], detail = True, permission_classes = [AllowAny])
     def retrieve(self, request: Request, pk: UUID) -> Response:
         """Получает информацию о запросе аутентификации.
         
@@ -65,7 +66,7 @@ class AuthenticationRequestView(viewsets.ViewSet):
         serializer = AuthenticationRequestSerializer(authentication_request)
         return Response(serializer.data, status = status.HTTP_200_OK)
 
-    @action(methods = ['delete'], detail = True)
+    @action(methods = ['delete'], detail = True, permission_classes = [AllowAny])
     def destroy(self, request: Request, pk: UUID) -> Response:
         """Удаляет запрос аутентификации.
         

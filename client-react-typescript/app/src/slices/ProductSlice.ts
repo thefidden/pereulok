@@ -1,0 +1,53 @@
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+
+import type { Product } from '../interfaces/ProductInterface.ts';
+
+interface State {
+    product: Product | null,
+    loading: boolean
+}
+
+export const fetchProduct = createAsyncThunk(
+    'product/fetchProduct',
+
+    async (productId: string): Promise<Product> => {
+        const response = await fetch(`/api/products/${productId}/`)
+        const { id, name, type, description, price, images } = await response.json()
+        return {
+            id: id,
+            name: name,
+            type: type,
+            description: description,
+            price: price,
+            images: images
+        } as Product
+    }
+)
+
+export const ProductSlice = createSlice({
+    name: 'product',
+
+    initialState: {
+        product: null,
+        loading: false
+    } as State,
+
+    reducers: {},
+
+    extraReducers: (builder) => {
+        // FETCH PRODUCT
+        builder
+            .addCase(fetchProduct.pending, (state) => {
+                state.loading = true
+            })
+            .addCase(fetchProduct.fulfilled, (state, action) => {
+                state.product = action.payload
+                state.loading = false
+            })
+            .addCase(fetchProduct.rejected, (state) => {
+                state.loading = false
+            })
+    }
+})
+
+export const productReducer = ProductSlice.reducer

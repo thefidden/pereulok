@@ -3,7 +3,6 @@
 .idea
 .kiro
 client-react
-client-react-typescript
 logs
 run-django.bat
 run-telegram-bot.bat

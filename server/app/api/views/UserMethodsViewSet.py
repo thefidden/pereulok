@@ -9,8 +9,8 @@ from django.core.files import File
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action, permission_classes
+from rest_framework.permissions import *
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -26,7 +26,7 @@ class UserMethodsViewSet(viewsets.ViewSet):
     и очистки корзины.
     """
     # noinspection PyTypeChecker
-    @action(methods = ['post'], detail = False)
+    @action(methods = ['post'], detail = False, permission_classes = [AllowAny])
     def authenticate(self, request: Request) -> Response:
         """Аутентифицирует пользователя через Telegram.
         

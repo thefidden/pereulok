@@ -4,7 +4,8 @@ from uuid import UUID
 
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes
+from rest_framework.permissions import *
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -19,7 +20,7 @@ class AuthenticationTokenViewSet(viewsets.ViewSet):
     """
     serializer_class = AuthenticationTokenSerializer
 
-    @action(methods = ['post'], detail = False)
+    @action(methods = ['post'], detail = False, permission_classes = [AllowAny])
     def create(self, request: Request) -> Response:
         """Создает новый токен аутентификации.
         
@@ -32,7 +33,7 @@ class AuthenticationTokenViewSet(viewsets.ViewSet):
         auth_token: AuthenticationToken = AuthenticationToken.objects.create()
         return Response(data = {'token': auth_token.id}, status = status.HTTP_201_CREATED)
 
-    @action(methods = ['delete'], detail = True)
+    @action(methods = ['delete'], detail = True, permission_classes = [AllowAny])
     def destroy(self, request: Request, pk: UUID) -> Response:
         """Удаляет токен аутентификации.
         
